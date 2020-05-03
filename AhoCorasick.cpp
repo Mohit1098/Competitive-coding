@@ -50,14 +50,14 @@ class AhoCorasick{
 		int parent;
 		char charFromParent;
 		int suffLink;
-		int children[ALPHABET_SIZE];
-		int transitions[ALPHABET_SIZE];
+		ve<int> children;
+		ve<int> transitions;
 		bool leaf;
 		int ind;
 		
 		node(){
-			fill(children,children+ALPHABET_SIZE,-1);
-			fill(transitions,transitions+ALPHABET_SIZE,-1);
+			children.assign(ALPHABET_SIZE,-1);
+			transitions.assign(ALPHABET_SIZE,-1);
 			leaf=0;
 			suffLink=-1;
 		}
@@ -66,15 +66,13 @@ class AhoCorasick{
 
 public:
 	
-	node ** nodes;
+	ve<node> nodes;
 	int nodeCount;
 	
-	
-	AhoCorasick(int MaxNodes){
-		nodes = new node*[MaxNodes];
-		nodes[0] = new node();
-		nodes[0]->suffLink =0 ;
-		nodes[0]->parent=-1;
+	AhoCorasick(){
+		nodes.emplace_back();
+		nodes[0].suffLink =0 ;
+		nodes[0].parent=-1;
 		nodeCount=1;
 	}
 	
@@ -82,34 +80,35 @@ public:
 		int cur =0;
 		for(auto it:s){
 			int c = (it-'a');
-			if(nodes[cur]->children[c]==-1){
-				nodes[nodeCount] = new node ();
-				nodes[nodeCount]->parent = cur;
-				nodes[nodeCount]->charFromParent = it;
-				nodes[cur]->children[c] =nodeCount++;
+			if(nodes[cur].children[c]==-1){
+				nodes.emplace_back();
+				nodes[nodeCount].parent = cur;
+				nodes[nodeCount].charFromParent = it;
+				nodes[cur].children[c] =nodeCount++;
 			}
-			cur = nodes[cur]->children[c];
+			cur = nodes[cur].children[c];
 		}
-		nodes[cur]->leaf=1;
-		nodes[cur]->ind=ind;
+		nodes[cur].leaf=1;
+		nodes[cur].ind=ind;
 	}
 	
 	int suffLink(int nodeInd){
-		node* n = nodes[nodeInd];
-		if(n->suffLink==-1){
-			n->suffLink = (n->parent ==0 ) ? 0 : (transition(suffLink(n->parent), n->charFromParent));
+		node& n = nodes[nodeInd];
+		if(n.suffLink==-1){
+			n.suffLink = (n.parent ==0 ) ? 0 : (transition(suffLink(n.parent), n.charFromParent));
 		}
-		return n->suffLink;
+		return n.suffLink;
 	}
 	
 	int transition(int nodeIndex, char ch) {
 		int c = ch - 'a';
-		node* n = nodes[nodeIndex];
-		if (n->transitions[c] == -1)
-			n->transitions[c] = n->children[c] != -1 ? n->children[c] : (nodeIndex == 0 ? 0 : transition(suffLink(nodeIndex), ch));
-		return n->transitions[c];
+		node &n = nodes[nodeIndex];
+		if (n.transitions[c] == -1)
+			n.transitions[c] = (n.children[c] != -1) ? n.children[c] : (nodeIndex == 0 ? 0 : transition(suffLink(nodeIndex), ch));
+		return n.transitions[c];
 	}
 };
+
 
 // Example use
 int32_t main(){
