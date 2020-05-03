@@ -1,5 +1,5 @@
-
 // without exit links
+
 
 class AhoCorasick{
 	static const int ALPHABET_SIZE=26;
@@ -12,8 +12,7 @@ class AhoCorasick{
 		int children[ALPHABET_SIZE];
 		int transitions[ALPHABET_SIZE];
 		bool leaf;
-		int length;
-		int beauty;
+		int ind;
 		
 		node(){
 			fill(children,children+ALPHABET_SIZE,-1);
@@ -22,8 +21,8 @@ class AhoCorasick{
 			suffLink=-1;
 		}
 	};
-	
-	
+
+
 public:
 	
 	node ** nodes;
@@ -38,7 +37,7 @@ public:
 		nodeCount=1;
 	}
 	
-	void addString(string& s,int b){
+	void addString(string& s,int ind){
 		int cur =0;
 		for(auto it:s){
 			int c = (it-'a');
@@ -47,12 +46,11 @@ public:
 				nodes[nodeCount]->parent = cur;
 				nodes[nodeCount]->charFromParent = it;
 				nodes[cur]->children[c] =nodeCount++;
- 			}
+			}
 			cur = nodes[cur]->children[c];
 		}
 		nodes[cur]->leaf=1;
-		nodes[cur]->beauty =b;
-		nodes[cur]->length=s.length();
+		nodes[cur]->ind=ind;
 	}
 	
 	int suffLink(int nodeInd){
@@ -60,6 +58,7 @@ public:
 		if(n->suffLink==-1){
 			n->suffLink = (n->parent ==0 ) ? 0 : (transition(suffLink(n->parent), n->charFromParent));
 		}
+		return n->suffLink;
 	}
 	
 	int transition(int nodeIndex, char ch) {
@@ -70,7 +69,6 @@ public:
 		return n->transitions[c];
 	}
 };
-
 
 // Example use
 int32_t main(){
