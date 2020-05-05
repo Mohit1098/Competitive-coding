@@ -1,2 +1,2 @@
 # Competitive-coding
-Competitive coding Lagos and data structures
+Competitive coding agos and data structures
