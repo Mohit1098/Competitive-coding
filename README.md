@@ -1,2 +1,2 @@
 # Competitive-coding
-Competitive coding agos and data structures
+Competitive coding algos and data structures
